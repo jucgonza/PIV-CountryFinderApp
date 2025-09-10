@@ -2,17 +2,21 @@ import { useState } from "react";
 import Header from "./components/Header";
 import Search from "./components/Search";
 import CountriesList from "./countries/CountriesList";
+import Loading from "./components/Loading";
 import { getCountriesByName } from "./actions/getCountriesByName";
 import "./App.css";
 
 function App() {
 	const [countries, setCountries] = useState([]);
+	const [loading, setLoading] = useState(false);
 	const [search, setSearch] = useState("");
 	const [error, setError] = useState(""); // Shows message if response is empty
 
 	const handleSubmit = (e) => {
 		// Avoids page reload
 		e.preventDefault();
+
+		setLoading(true);
 
 		// Resets state
 		setCountries([]);
@@ -26,7 +30,7 @@ function App() {
 			}
 
 			setError("No matches found. Try with another name.");
-		});
+		}).finally(() => setLoading(false));
 	};
 
 	// Keeps user input
@@ -43,6 +47,8 @@ function App() {
 				onSubmit={handleSubmit}
 				placeholder="Search by country name..."
 			/>
+
+			{loading && <Loading />}
 
 			<CountriesList countries={countries} error={error} />
 		</>
