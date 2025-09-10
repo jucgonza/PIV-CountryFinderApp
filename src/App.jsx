@@ -1,67 +1,52 @@
-import {useState} from 'react'
-import axios from 'axios'
-import './App.css'
+import { useState } from "react";
+import Header from "./components/Header";
+import Search from "./components/Search";
+import CountriesList from "./countries/CountriesList";
+import { getCountriesByName } from "./actions/getCountriesByName";
+import "./App.css";
 
 function App() {
-  const [search, setSearch] = useState('');
-  const [countries, setCountries] = useState([]);
+	const [countries, setCountries] = useState([]);
+	const [search, setSearch] = useState("");
+	const [error, setError] = useState(""); // Shows message if response is empty
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    axios.get(`https://restcountries.com/v3.1/name/${search}?fields=name,independent,currencies,capital,region,subregion,languages,population,flags`)
-      .then(response => {
-        setCountries(response.data)
-        console.log(response.data)
-      })
-      .catch(error => console.log("Error getting countries:", error))
-  }
+	const handleSubmit = (e) => {
+		// Avoids page reload
+		e.preventDefault();
 
-  const onInput = (e) => {
-    setSearch(e.target.value);
-  }
+		// Resets state
+		setCountries([]);
+		setError("");
 
-  const getLanguages = (data) => {
-    let languages = [];
+		// Makes API call and return countries
+		getCountriesByName(search).then((response) => {
+			if (response.status) {
+				setCountries(response.data);
+				return;
+			}
 
-    for(let property in data){
-      languages.push(data[property]);
-    }
+			setError("No matches found. Try with another name.");
+		});
+	};
 
-    return languages.join(", ");
-  }
+	// Keeps user input
+	const onInput = (e) => {
+		setSearch(e.target.value);
+	};
 
-  const getCurrencies = (data) => {
-    let currencies = [];
+	return (
+		<>
+			<Header title="CountriesApp" description="Buscador de Países" />
 
-    for(let property in data){
-      currencies.push(`${data[property].name} (${data[property].symbol})`);
-    }
+			<Search
+				onInput={onInput}
+				onSubmit={handleSubmit}
+				placeholder="Search by country name..."
+			/>
 
-    return currencies.join(", ")
-  }
-
-  return (
-    <>
-      <form onSubmit={handleSubmit}>
-        <input type="text" required placeholder="Search by country name..." onInput={onInput}/>
-        <button type="submit">Search</button>
-      </form>
-
-      {countries.map(i => 
-        <div key={i.name.official} style={{border: "1px solid black", margin: "20px", padding: "20px"}}>
-          <p>Name: {i.name.official}</p>
-          <p>Capital: {i.capital[0]}</p>
-          <p>Region: {i.subregion}</p>
-          <p>Population: {i.population}</p>
-          <p>Languages: {getLanguages(i.languages)}</p>
-          <p>Currencies: {getCurrencies(i.currencies)}</p>
-          <p>
-            <img src={i.flags.png} alt={i.flags.alt} />
-          </p>
-        </div>
-      )}
-    </>
-  )
+			<CountriesList countries={countries} error={error} />
+		</>
+	);
 }
 
-export default App
+export default App;
