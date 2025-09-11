@@ -40,6 +40,8 @@ npm run dev
 - [React](https://react.dev/)
 - [Vite](https://vite.dev/)
 - [REST Countries](https://restcountries.com/)
+- [Tailwindcss](https://tailwindcss.com/)
+- [Heroicons](https://heroicons.com/)
 
 ## 📄 License
 

@@ -1,9 +1,9 @@
 const Header = ({title, description}) => {
     return (
-        <>
-            <h1>{title}</h1>
-            <p>{description}</p>
-        </>
+        <div>
+            <span className="text-2xl font-bold">{title}</span>
+            <span className="ms-4">{description}</span>
+        </div>
     )
 }
 

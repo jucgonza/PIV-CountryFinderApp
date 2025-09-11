@@ -2,7 +2,6 @@ import { useState } from "react";
 import Header from "./components/Header";
 import Search from "./components/Search";
 import CountriesList from "./countries/CountriesList";
-import Loading from "./components/Loading";
 import { getCountriesByName } from "./actions/getCountriesByName";
 import "./App.css";
 
@@ -39,19 +38,18 @@ function App() {
 	};
 
 	return (
-		<>
+		<div className="w-[90%] mx-auto my-5 text-gray-700">
 			<Header title="CountriesApp" description="Buscador de Países" />
 
 			<Search
 				onInput={onInput}
 				onSubmit={handleSubmit}
 				placeholder="Search by country name..."
+				loading={loading}
 			/>
 
-			{loading && <Loading />}
-
-			<CountriesList countries={countries} error={error} />
-		</>
+			<CountriesList countries={countries} error={error} loading={loading} />
+		</div>
 	);
 }
 
